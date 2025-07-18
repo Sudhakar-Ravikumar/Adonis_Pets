@@ -3,9 +3,20 @@ import { defineStore } from 'pinia'
 import { ref, computed, watch } from 'vue'
 import axios from 'axios'
 
-const API = 'http://localhost:3333'
-const API_KEY = '345678ppppppppdfsdfdfsdf'
-axios.defaults.headers.common['Authorization'] = API_KEY
+const API = import.meta.env.VITE_ADONIS_API_URL
+const API_KEY = import.meta.env.VITE_AUTH_TOKEN
+// Restore JWT token on app load
+const token = localStorage.getItem('jwt_token')
+
+if (!API_KEY ) {
+  console.error('Missing API key , Authentication will fail.')
+}
+if (!token) {
+  console.error('Missing JWT token , Authentication will fail.')
+}
+
+axios.defaults.headers.common['x-api-key'] = API_KEY
+axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
 
 export const usePetStore = defineStore('pet', () => {
   const form = ref({
@@ -118,8 +129,8 @@ export const usePetStore = defineStore('pet', () => {
     }
   }
 
-  const editPet = (pId) => {
-    const pet = pets.value.find(p => p.pId === pId)
+  const editPet = (row) => {
+    const pet = pets.value.find(p => p.pId === row.pId)
     if (!pet) return
 
     Object.assign(form.value, {
@@ -144,9 +155,9 @@ export const usePetStore = defineStore('pet', () => {
     }
   }
 
-  const deletePet = async (pId) => {
+  const deletePet = async (row) => {
     try {
-      await axios.delete(`${API}/pets/${pId}`)
+      await axios.delete(`${API}/pets/${row.pId}`)
       await fetchPets()
     } catch (err) {
       error.value = err?.response?.data?.message || 'Failed to delete pet'

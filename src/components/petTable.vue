@@ -3,7 +3,7 @@
     <input
       v-model="searchQuery"
       placeholder="Search anything..."
-      style="margin-bottom: 10px; padding: 5px; width: 100%;"
+      style="margin-bottom: 10px;margin-top:10px; padding: 5px; width: 20%;"
     />
 
     <table border="1" cellpadding="10" v-if="headers.length">
@@ -31,11 +31,11 @@
           </td>
           <td>
             <!-- <button @click="$emit('edit', getOriginalIndex(row))">✏️</button> -->
-             <button @click="$emit('edit', row.pId)">✏️</button>
+             <button @click="$emit('edit', row)">✏️</button>
           </td>
           <td>
             <!-- <button @click="$emit('delete', getOriginalIndex(row))">🗑️</button> -->
-            <button @click="$emit('delete', row.pId)">🗑️</button>
+            <button @click="$emit('delete', row)">🗑️</button>
 
           </td>
         </tr>
